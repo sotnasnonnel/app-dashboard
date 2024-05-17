@@ -52,33 +52,35 @@ df_vendas_corte_anterior = df_vendas[(df_vendas.index.date >= data_inicial - tim
 
 col1, col2, col3, col4 = st.columns(4)
 
-valor_vendas = f"R$ {df_vendas_corte['preco'].sum() / 1000:.0f} Mil"
-dif_metrica = df_vendas_corte['preco'].sum() - df_vendas_corte_anterior['preco'].sum()
-col1.metric('Valor de vendas no período', valor_vendas, float(dif_metrica))
+if not df_vendas_corte.empty:
+    valor_vendas = f"R$ {df_vendas_corte['preco'].sum() / 1000:.0f} Mil"
+    dif_metrica = df_vendas_corte['preco'].sum() - df_vendas_corte_anterior['preco'].sum()
+    col1.metric('Valor de vendas no período', valor_vendas, float(dif_metrica))
 
-quantidade_vendas = df_vendas_corte['preco'].count()
-dif_metrica = df_vendas_corte['preco'].count() - df_vendas_corte_anterior['preco'].count()
-col2.metric('Quantidade de vendas no período', quantidade_vendas, int(dif_metrica))
+    quantidade_vendas = df_vendas_corte['preco'].count()
+    dif_metrica = df_vendas_corte['preco'].count() - df_vendas_corte_anterior['preco'].count()
+    col2.metric('Quantidade de vendas no período', quantidade_vendas, int(dif_metrica))
 
-principal_filial = df_vendas_corte['filial'].value_counts().index[0]
-col3.metric('Principal filial', principal_filial)
+    principal_filial = df_vendas_corte['filial'].value_counts().index[0]
+    col3.metric('Principal filial', principal_filial)
 
-principal_vendedor = df_vendas_corte['vendedor'].value_counts().index[0]
-col4.metric('Principal vendedor', principal_vendedor)
+    principal_vendedor = df_vendas_corte['vendedor'].value_counts().index[0]
+    col4.metric('Principal vendedor', principal_vendedor)
 
 st.divider()
 
 col21, col22 = st.columns(2)
 
-df_vendas_corte['dia_venda'] = df_vendas_corte.index.date
-venda_dia = df_vendas_corte.groupby('dia_venda')['preco'].sum()
-venda_dia.name = 'Valor Venda'
+if not df_vendas_corte.empty:
+    df_vendas_corte['dia_venda'] = df_vendas_corte.index.date
+    venda_dia = df_vendas_corte.groupby('dia_venda')['preco'].sum()
+    venda_dia.name = 'Valor Venda'
 
-fig = px.line(venda_dia)
-col21.plotly_chart(fig)
+    fig = px.line(venda_dia)
+    col21.plotly_chart(fig)
 
-fig = px.pie(df_vendas_corte, names=analise_selecionada, values='preco')
-fig.update_traces(textinfo='label+percent')
-col22.plotly_chart(fig)
+    fig = px.pie(df_vendas_corte, names=analise_selecionada, values='preco')
+    fig.update_traces(textinfo='label+percent')
+    col22.plotly_chart(fig)
 
 st.divider()
