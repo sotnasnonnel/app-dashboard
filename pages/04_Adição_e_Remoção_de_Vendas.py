@@ -1,5 +1,5 @@
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, date
 import streamlit as st
 import pandas as pd
 
@@ -14,50 +14,43 @@ df_produtos = st.session_state['dados']['df_produtos']
 df_filiais['cidade/estado'] = df_filiais['cidade'] + '/' + df_filiais['estado']
 cidades_filiais = df_filiais['cidade/estado']
 
-
 st.sidebar.markdown('## Adição de Vendas')
-filial_selecionada = st.sidebar.selectbox('Selecione a filial:',
-                                            cidades_filiais)
+filial_selecionada = st.sidebar.selectbox('Selecione a filial:', cidades_filiais)
 vendedores = df_filiais.loc[df_filiais['cidade/estado'] == filial_selecionada, 'vendedores'].iloc[0]
 vendedores = vendedores.strip('][').replace("'", '').split(', ')
-vendedor_selecionado = st.sidebar.selectbox('Selecione o vendedor:',
-                                            vendedores)
+vendedor_selecionado = st.sidebar.selectbox('Selecione o vendedor:', vendedores)
 produtos = df_produtos['nome'].to_list()
-produto_selecionado = st.sidebar._selectbox('Selecione o produto',
-                                            produtos)
+produto_selecionado = st.sidebar._selectbox('Selecione o produto', produtos)
 
 nome_cliente = st.sidebar.text_input('Nome do Cliente')
-genero_selecionado = st.sidebar.selectbox('Gênero cliente',
-                                         ['masculino', 'feminino'])
+genero_selecionado = st.sidebar.selectbox('Gênero cliente', ['masculino', 'feminino'])
 
-forma_de_pagamento = st.sidebar.selectbox('Forma de pagamento:',
-                                          ['boleto', 'pix', 'credito'])
+forma_de_pagamento = st.sidebar.selectbox('Forma de pagamento:', ['boleto', 'pix', 'credito'])
 
 adicionar_venda = st.sidebar.button('Adicionar Venda')
 if adicionar_venda:
-    lista_adicionada = [df_vendas['id_venda'].max() +1,
-                        filial_selecionada.split('/')[0],
-                        vendedor_selecionado,
-                        produto_selecionado,
-                        nome_cliente,
-                        genero_selecionado,
-                        forma_de_pagamento
-                        ]
+    lista_adicionada = [df_vendas['id_venda'].max() + 1, filial_selecionada.split('/')[0], vendedor_selecionado,
+                        produto_selecionado, nome_cliente, genero_selecionado, forma_de_pagamento]
     hora_adicionar = datetime.now()
     df_vendas.loc[hora_adicionar] = lista_adicionada
-    caminho_datasets = st.session_state['caminho_datasets'] 
+    data_final_def = df_vendas.index.max().date()  # Atualizar data_final_def
+    caminho_datasets = st.session_state['caminho_datasets']
     df_vendas.to_excel(caminho_datasets / 'vendas.xlsx')
 
-
 st.sidebar.markdown('## Remoção de Vendas')
-id_remocao = st.sidebar.number_input('Id venda a ser removido:',
-                                     0,
-                                     df_vendas['id_venda'].max())
+id_remocao = st.sidebar.number_input('Id venda a ser removido:', 0, df_vendas['id_venda'].max())
 remover_venda = st.sidebar.button('Remover Venda')
 if remover_venda:
     df_vendas = df_vendas[df_vendas['id_venda'] != id_remocao]
-    caminho_datasets = st.session_state['caminho_datasets'] 
+    caminho_datasets = st.session_state['caminho_datasets']
     df_vendas.to_excel(caminho_datasets / 'vendas.xlsx')
     st.session_state['dados']['df_vendas'] = df_vendas
 
 st.dataframe(df_vendas, height=800)
+
+# Verificar se há uma data final definida
+if 'data_final_def' not in locals() or data_final_def is None:
+    data_final_def = date.today()  # Usar data atual se data_final_def não estiver definido
+
+# Definir data inicial como o primeiro dia do mês da data final
+data_inicial_def = date(year=data_final_def.year, month=data_final_def.month, day=1)
