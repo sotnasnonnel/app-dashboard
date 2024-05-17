@@ -9,7 +9,7 @@ st.divider()
 
 st.markdown(
     '''
-        Esse Projeto foi desenvolvido como projeto final do curso ***Python***.
+        by: ***Lennon***.
 
     '''
 )
