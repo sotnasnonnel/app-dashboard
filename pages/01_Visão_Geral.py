@@ -35,6 +35,9 @@ primeiro_dia_mes_anterior = date(hoje.year, hoje.month - 1, 1) if hoje.month > 1
 data_inicial_def = primeiro_dia_mes_anterior
 
 data_final_def = df_vendas.index.max()
+if data_final_def is not None:
+    data_final_def = data_final_def.date()
+
 data_inicial = st.sidebar.date_input('Data Inicial', data_inicial_def)
 data_final = st.sidebar.date_input('Data Final', data_final_def)
 
