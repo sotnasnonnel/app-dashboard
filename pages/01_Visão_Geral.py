@@ -4,6 +4,12 @@ import streamlit as st
 import pandas as pd
 import plotly_express as px
 
+# Adicione a função configure_page aqui
+def configure_page():
+    st.set_page_config(layout="wide", page_title="Dashboard", page_icon=":bar_chart:")
+
+# Chame a função configure_page imediatamente após defini-la
+configure_page()
 
 from utilidades import leitura_de_dados, COMISSAO
 
