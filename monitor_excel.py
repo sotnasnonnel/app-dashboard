@@ -11,11 +11,15 @@ class ChangeHandler(FileSystemEventHandler):
         self.repo = git.Repo(repo_dir)
 
     def on_modified(self, event):
-        if any(event.src_path.endswith(file_path) for file_path in self.file_paths):
-            print(f"One of the monitored files has been modified")
+        print(f"Event detected: {event.src_path}")
+        if any(event.src_path.endswith(os.path.basename(file_path)) for file_path in self.file_paths):
+            print(f"One of the monitored files has been modified: {event.src_path}")
             for file_path in self.file_paths:
+                print(f"Adding file to git: {file_path}")
                 self.repo.git.add(file_path)
+            print("Committing changes")
             self.repo.index.commit(f"Update monitored files")
+            print("Pushing changes to GitHub")
             self.repo.git.push()
 
 def monitor_files(repo_dir, file_paths):
