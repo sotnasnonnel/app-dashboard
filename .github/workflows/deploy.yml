@@ -24,6 +24,6 @@ jobs:
         pip install -r requirements.txt
 
     - name: Deploy to Streamlit
-      run: streamlit run your_script.py  # Substitua pelo comando correto para seu deploy
+      run: streamlit run home.py  # Substitua pelo comando correto para seu deploy
       env:
         STREAMLIT_API_KEY: ${{ secrets.STREAMLIT_API_KEY }}
